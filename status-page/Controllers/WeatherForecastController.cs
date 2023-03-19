@@ -14,6 +14,7 @@ public class StatusController : ControllerBase
         return Ok(response);
     }
 
+    // the response
     public class StatusResponse
     {
         public int Status { get; set; }
