@@ -4,30 +4,23 @@ namespace status_page.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class WeatherForecastController : ControllerBase
+public class StatusController : ControllerBase
 {
-    private static readonly string[] Summaries = new[]
+    [HttpGet()]
+    public IActionResult Get()
     {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
-
-    private readonly ILogger<WeatherForecastController> _logger;
-
-    public WeatherForecastController(ILogger<WeatherForecastController> logger)
-    {
-        _logger = logger;
+        var status = System.IO.File.ReadAllText("./status.txt");
+        var response = System.Text.Json.JsonSerializer.Deserialize<StatusResponse>(status, new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        return Ok(response);
     }
 
-    [HttpGet(Name = "GetWeatherForecast")]
-    public IEnumerable<WeatherForecast> Get()
+    public class StatusResponse
     {
-        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        {
-            Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-        })
-        .ToArray();
+        public int Status { get; set; }
+
+        public string Description { get; set; }
+
+        public string EstimatedEndTime { get; set; }
     }
 }
 
